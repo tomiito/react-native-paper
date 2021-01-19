@@ -98,6 +98,12 @@ const CardExample = () => {
           </Paragraph>
         </Card.Content>
       </Card>
+      <Card style={styles.card} mode="outlined">
+        <Card.Title title="Outlined card" />
+        <Card.Content>
+          <Paragraph>This is an outlined card</Paragraph>
+        </Card.Content>
+      </Card>
     </ScrollView>
   );
 };

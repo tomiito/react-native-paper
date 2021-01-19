@@ -16,11 +16,21 @@ import CardTitle, { CardTitle as _CardTitle } from './CardTitle';
 import Surface from '../Surface';
 import { withTheme } from '../../core/theming';
 
+type OutlinedCardProps = {
+  mode: 'outlined';
+  elevation?: never;
+};
+
+type ElevatedCardProps = {
+  mode?: 'elevated';
+  elevation?: number;
+};
+
 type Props = React.ComponentProps<typeof Surface> & {
   /**
    * Resting elevation of the card which controls the drop shadow.
    */
-  elevation?: number;
+  elevation?: never | number;
   /**
    * Function to execute on long press.
    */
@@ -29,6 +39,12 @@ type Props = React.ComponentProps<typeof Surface> & {
    * Function to execute on press.
    */
   onPress?: () => void;
+  /**
+   * Mode of the Card.
+   * - `elevated` - Card with elevation.
+   * - `outlined` - Card with an outline.
+   */
+  mode?: 'elevated' | 'outlined';
   /**
    * Content of the `Card`.
    */
@@ -85,13 +101,14 @@ const Card = ({
   elevation: cardElevation = 1,
   onLongPress,
   onPress,
+  mode: cardMode = 'elevated',
   children,
   style,
   theme,
   testID,
   accessible,
   ...rest
-}: Props) => {
+}: (OutlinedCardProps | ElevatedCardProps) & Props) => {
   const { current: elevation } = React.useRef<Animated.Value>(
     new Animated.Value(cardElevation)
   );
@@ -131,8 +148,12 @@ const Card = ({
   );
   return (
     <Surface
-      // @ts-ignore
-      style={[{ borderRadius: roundness, elevation }, style]}
+      style={[
+        // @ts-ignore
+        { borderRadius: roundness, elevation },
+        cardMode === 'outlined' ? styles.outlined : {},
+        style,
+      ]}
       {...rest}
     >
       <TouchableWithoutFeedback
@@ -174,6 +195,11 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexGrow: 1,
     flexShrink: 1,
+  },
+  outlined: {
+    elevation: 0,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.12)',
   },
 });
 
